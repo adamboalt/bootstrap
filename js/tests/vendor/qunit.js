@@ -483,12 +483,14 @@ var config = {
 
 // Expose the API as global variables, unless an 'exports'
 // object exists, in that case we assume we're in CommonJS
-if ( typeof exports === "undefined" || typeof require === "undefined" ) {
-	extend(window, QUnit);
-	window.QUnit = QUnit;
-} else {
+if ( typeof exports !== "undefined" && typeof require !== "undefined" ) {
 	extend(exports, QUnit);
 	exports.QUnit = QUnit;
+} else if(typeof define === "function" && define.amd) {
+	define("QUnit", [], function(){ return QUnit; });
+} else {
+	extend(window, QUnit);
+	window.QUnit = QUnit;
 }
 
 // define these after exposing globals to keep them in these QUnit namespace only
