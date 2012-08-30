@@ -1,3 +1,13 @@
+This version of [Twitter Bootstrap](http://twitter.github.com/bootstrap) has two goals:
+
+1.  *no jquery*
+2.  [*AMD*](https://github.com/amdjs/amdjs-api/wiki/AMD)
+3.  no change too much code
+
+I have only implemented the dropdown so far.
+
+
+
 [Twitter Bootstrap](http://twitter.github.com/bootstrap) [![Build Status](https://secure.travis-ci.org/twitter/bootstrap.png)](http://travis-ci.org/twitter/bootstrap)
 =================
 
