@@ -1,14 +1,23 @@
-$(function () {
+define(["../../bootstrap-dropdown.js", "zq", "QUnit"], function(dd, $, q){
+  
+  var module = q.module,
+    test = q.test,
+    ok = q.ok;
+
+
+  function run() {
 
     module("bootstrap-dropdowns")
 
       test("should be defined on jquery object", function () {
-        ok($(document.body).dropdown, 'dropdown method is defined')
+
+        ok(dd, 'dropdown method is defined')
       })
 
-      test("should return element", function () {
-        ok($(document.body).dropdown()[0] == document.body, 'document.body returned')
-      })
+      //dd doesnt return anything.
+      // test("should return element", function () {
+      //   ok(dd(bonzo(document.body))[0] == document.body, 'document.body returned')
+      // })
 
       test("should not open dropdown if target is disabled", function () {
         var dropdownHTML = '<ul class="tabs">'
@@ -22,9 +31,9 @@ $(function () {
           + '</ul>'
           + '</li>'
           + '</ul>'
-          , dropdown = $(dropdownHTML).find('[data-toggle="dropdown"]').dropdown().click()
+          , dropdown = dd($.create(dropdownHTML).find('[data-toggle="dropdown"]')).fire("click")
 
-        ok(!dropdown.parent('.dropdown').hasClass('open'), 'open class added on click')
+        ok(!$(dropdown.parent('.dropdown')).hasClass('open'), 'open class added on click')
       })
 
       test("should not open dropdown if target is disabled", function () {
@@ -39,9 +48,9 @@ $(function () {
           + '</ul>'
           + '</li>'
           + '</ul>'
-          , dropdown = $(dropdownHTML).find('[data-toggle="dropdown"]').dropdown().click()
+          , dropdown = dd($.create(dropdownHTML).find('[data-toggle="dropdown"]')).fire("click")
 
-        ok(!dropdown.parent('.dropdown').hasClass('open'), 'open class added on click')
+        ok(!$(dropdown.parent('.dropdown')).hasClass('open'), 'open class added on click')
       })
 
       test("should add class open to menu if clicked", function () {
@@ -56,9 +65,9 @@ $(function () {
           + '</ul>'
           + '</li>'
           + '</ul>'
-          , dropdown = $(dropdownHTML).find('[data-toggle="dropdown"]').dropdown().click()
+         , dropdown = dd($.create(dropdownHTML).find('[data-toggle="dropdown"]')).fire("click")
 
-        ok(dropdown.parent('.dropdown').hasClass('open'), 'open class added on click')
+        ok($(dropdown.parent('.dropdown')).hasClass('open'), 'open class added on click')
       })
 
       test("should remove open class if body clicked", function () {
@@ -73,15 +82,20 @@ $(function () {
           + '</ul>'
           + '</li>'
           + '</ul>'
-          , dropdown = $(dropdownHTML)
-            .appendTo('#qunit-fixture')
-            .find('[data-toggle="dropdown"]')
-            .dropdown()
-            .click()
-        ok(dropdown.parent('.dropdown').hasClass('open'), 'open class added on click')
-        $('body').click()
-        ok(!dropdown.parent('.dropdown').hasClass('open'), 'open class removed')
+          , dropdown = $.create(dropdownHTML)
+                        .appendTo('#qunit-fixture')
+        
+        var dropdownBtn = dropdown.find('[data-toggle="dropdown"]');
+        dd(dropdownBtn).fire("click")
+        
+        ok($(dropdownBtn.parent('.dropdown')).hasClass('open'), 'open class added on click')
+
+        $('body').fire("click")
+
+        ok(!$(dropdownBtn.parent('.dropdown')).hasClass('open'), 'open class removed')
         dropdown.remove()
       })
+  }
 
-})
+  return {run: run};
+});

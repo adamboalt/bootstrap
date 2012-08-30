@@ -17,9 +17,7 @@
  * limitations under the License.
  * ============================================================ */
 
-
-!function ($) {
-
+define(["zq"], function($){
   "use strict"; // jshint ;_;
 
 
@@ -30,7 +28,7 @@
     , Dropdown = function (element) {
         var $el = $(element).on('click.dropdown.data-api', this.toggle)
         $('html').on('click.dropdown.data-api', function () {
-          $el.parent().removeClass('open')
+          $($el.parent()).removeClass('open')
         })
       }
 
@@ -39,11 +37,13 @@
     constructor: Dropdown
 
   , toggle: function (e) {
+      e.preventDefault()
+      e.stopPropagation()
       var $this = $(this)
         , $parent
         , isActive
 
-      if ($this.is('.disabled, :disabled')) return
+      if ($this.hasClass('disabled') || $this.attr("disabled")) return
 
       $parent = getParent($this)
 
@@ -113,26 +113,33 @@
       selector = selector && selector.replace(/.*(?=#[^\s]*$)/, '') //strip for ie7
     }
 
-    $parent = $(selector)
-    $parent.length || ($parent = $this.parent())
+    if (selector !== "#") {
+      $parent = $(selector)
+      $parent.length || ($parent = $this.parent())
+    } else {
+      $parent = $this.parent()
+    }
 
-    return $parent
+    return $($parent)
   }
 
 
   /* DROPDOWN PLUGIN DEFINITION
    * ========================== */
 
-  $.fn.dropdown = function (option) {
-    return this.each(function () {
-      var $this = $(this)
+  var result = function (elements, option) {
+    $(elements).each(function (el) {
+      var $this = $(el)
         , data = $this.data('dropdown')
-      if (!data) $this.data('dropdown', (data = new Dropdown(this)))
+      if (!data) {
+        $this.data('dropdown', (data = new Dropdown(this)))
+      }
       if (typeof option == 'string') data[option].call($this)
     })
+    return elements
   }
 
-  $.fn.dropdown.Constructor = Dropdown
+  // $.fn.dropdown.Constructor = Dropdown
 
 
   /* APPLY TO STANDARD DROPDOWN ELEMENTS
@@ -147,4 +154,5 @@
       .on('keydown.dropdown.data-api touchstart.dropdown.data-api', toggle + ', [role=menu]' , Dropdown.prototype.keydown)
   })
 
-}(window.jQuery);
+  return result;
+});
