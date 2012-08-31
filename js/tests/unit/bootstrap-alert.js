@@ -1,13 +1,18 @@
-$(function () {
+define(["../../bootstrap-alert.js", "zq", "QUnit"], function(al, $, q){
+  var module = q.module,
+    test = q.test,
+    ok = q.ok;
+
+  function run(){
 
     module("bootstrap-alerts")
 
       test("should be defined on jquery object", function () {
-        ok($(document.body).alert, 'alert method is defined')
+        ok(al, 'alert method is defined')
       })
 
       test("should return element", function () {
-        ok($(document.body).alert()[0] == document.body, 'document.body returned')
+        ok(al($(document.body))[0] == document.body, 'document.body returned')
       })
 
       test("should fade element out on clicking .close", function () {
@@ -15,42 +20,49 @@ $(function () {
           + '<a class="close" href="#" data-dismiss="alert">×</a>'
           + '<p><strong>Holy guacamole!</strong> Best check yo self, you\'re not looking too good.</p>'
           + '</div>'
-          , alert = $(alertHTML).alert()
+          , alert = al($.create(alertHTML).appendTo('#qunit-fixture'))
 
-        alert.find('.close').click()
+
+
+        alert.find('.close')
+            .fire("click")
 
         ok(!alert.hasClass('in'), 'remove .in class on .close click')
       })
 
       test("should remove element when clicking .close", function () {
-        $.support.transition = false
+        // not supported yet
+        // $.support.transition = false
 
         var alertHTML = '<div class="alert-message warning fade in">'
           + '<a class="close" href="#" data-dismiss="alert">×</a>'
           + '<p><strong>Holy guacamole!</strong> Best check yo self, you\'re not looking too good.</p>'
           + '</div>'
-          , alert = $(alertHTML).appendTo('#qunit-fixture').alert()
+          , alert = al($.create(alertHTML).appendTo('#qunit-fixture'))
 
         ok($('#qunit-fixture').find('.alert-message').length, 'element added to dom')
 
-        alert.find('.close').click()
+        alert.find('.close').fire("click")
 
         ok(!$('#qunit-fixture').find('.alert-message').length, 'element removed from dom')
       })
 
       test("should not fire closed when close is prevented", function () {
-        $.support.transition = false
+        // not supported yet
+        // $.support.transition = false
         stop();
-        $('<div class="alert"/>')
-          .bind('close', function (e) {
+        al($('<div class="alert"/>')
+          .on('close', function (e) {
             e.preventDefault();
             ok(true);
             start();
           })
-          .bind('closed', function () {
+          .on('closed', function () {
             ok(false);
-          })
-          .alert('close')
+          }), 'close')
       })
+  }
 
-})
+  return {run:run};
+
+});

@@ -1,10 +1,13 @@
 This version of [Twitter Bootstrap](http://twitter.github.com/bootstrap) has two goals:
 
-1.  *no jquery*
-2.  [*AMD*](https://github.com/amdjs/amdjs-api/wiki/AMD)
-3.  no change too much code
+1.  **no jquery**
+2.  [**AMD**](https://github.com/amdjs/amdjs-api/wiki/AMD)
 
-I have only implemented the dropdown so far.
+I have implemented:
+
+- affix (need more tests)
+- alert (without transitions)
+- dropdown
 
 
 

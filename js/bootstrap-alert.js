@@ -18,7 +18,7 @@
  * ========================================================== */
 
 
-!function ($) {
+define(["zq"], function($){
 
   "use strict"; // jshint ;_;
 
@@ -41,26 +41,30 @@
       selector = selector && selector.replace(/.*(?=#[^\s]*$)/, '') //strip for ie7
     }
 
-    $parent = $(selector)
+    $parent = selector === "#" ? [] : $(selector)
 
     e && e.preventDefault()
 
-    $parent.length || ($parent = $this.hasClass('alert') ? $this : $this.parent())
+    $parent.length || ($parent = $this.hasClass('alert') ? $this : $($this.parent()))
 
-    $parent.trigger(e = $.Event('close'))
 
-    if (e.isDefaultPrevented()) return
+    $parent.fire('close')
+
+    //oops I don't know how to do this with bean? 
+    //$parent.trigger(e = $.Event('close'))
+    //if (e.isDefaultPrevented()) return
 
     $parent.removeClass('in')
 
     function removeElement() {
       $parent
-        .trigger('closed')
+        .fire('closed')
         .remove()
     }
-
-    $.support.transition && $parent.hasClass('fade') ?
-      $parent.on($.support.transition.end, removeElement) :
+    
+    // not yet supported... 
+    // $.support.transition && $parent.hasClass('fade') ?
+    //   $parent.on($.support.transition.end, removeElement) :
       removeElement()
   }
 
@@ -68,17 +72,14 @@
  /* ALERT PLUGIN DEFINITION
   * ======================= */
 
-  $.fn.alert = function (option) {
-    return this.each(function () {
-      var $this = $(this)
+  var alert = function (elements, option) {
+    return elements.each(function (el) {
+      var $this = $(el)
         , data = $this.data('alert')
       if (!data) $this.data('alert', (data = new Alert(this)))
       if (typeof option == 'string') data[option].call($this)
     })
   }
-
-  $.fn.alert.Constructor = Alert
-
 
  /* ALERT DATA-API
   * ============== */
@@ -87,4 +88,5 @@
     $('body').on('click.alert.data-api', dismiss, Alert.prototype.close)
   })
 
-}(window.jQuery);
+  return alert;
+});
