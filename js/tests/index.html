@@ -16,8 +16,11 @@
 
   <!--  jam -->
   <script type="text/javascript">
-    require(["/js/tests/unit/bootstrap-dropdown.js", "unit/bootstrap-phantom.js"], function(bd, bp){
-      bd.run();
+    require(["/js/tests/unit/bootstrap-affix.js", 
+             "/js/tests/unit/bootstrap-dropdown.js", 
+              "unit/bootstrap-phantom.js"], function(affix, dropdown, bp){
+      affix.run();
+      dropdown.run();
     });
   </script>
 

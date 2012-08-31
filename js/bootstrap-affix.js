@@ -18,7 +18,7 @@
  * ========================================================== */
 
 
-!function ($) {
+define(["zq"], function($){
 
   "use strict"; // jshint ;_;
 
@@ -27,16 +27,23 @@
   * ====================== */
 
   var Affix = function (element, options) {
-    this.options = $.extend({}, $.fn.affix.defaults, options)
-    this.$window = $(window).on('scroll.affix.data-api', $.proxy(this.checkPosition, this))
+    this.options = {};
+    var i;
+    for(i in affix.defaults){ this.options[i] = affix.defaults[i] }
+    if(options)
+      for(i in options){ this.options[i] = options[i] }
+
+    this.$window = $(window).on('scroll.affix.data-api', function(e){this.checkPosition();})
     this.$element = $(element)
     this.checkPosition()
   }
 
   Affix.prototype.checkPosition = function () {
-    if (!this.$element.is(':visible')) return
+    if (this.$element.css('display') === "none"
+        || (this.$element.dim().width === 0 
+          && this.$element.dim().height === 0)) return
 
-    var scrollHeight = $(document).height()
+    var scrollHeight = $.doc().height
       , scrollTop = this.$window.scrollTop()
       , position = this.$element.offset()
       , offset = this.options.offset
@@ -50,7 +57,7 @@
     if (typeof offsetBottom == 'function') offsetBottom = offset.bottom()
 
     affix = this.unpin != null && (scrollTop + this.unpin <= position.top) ?
-      false    : offsetBottom != null && (position.top + this.$element.height() >= scrollHeight - offsetBottom) ?
+      false    : offsetBottom != null && (position.top + this.$element.dim().height >= scrollHeight - offsetBottom) ?
       'bottom' : offsetTop != null && scrollTop <= offsetTop ?
       'top'    : false
 
@@ -66,19 +73,17 @@
  /* AFFIX PLUGIN DEFINITION
   * ======================= */
 
-  $.fn.affix = function (option) {
-    return this.each(function () {
-      var $this = $(this)
+  var affix = function (elements, option) {
+    return $(elements).each(function (element) {
+      var $this = $(element)
         , data = $this.data('affix')
         , options = typeof option == 'object' && option
-      if (!data) $this.data('affix', (data = new Affix(this, options)))
+      if (!data) $this.data('affix', (data = new Affix($this, options)))
       if (typeof option == 'string') data[option]()
     })
   }
-
-  $.fn.affix.Constructor = Affix
-
-  $.fn.affix.defaults = {
+  
+  affix.defaults = {
     offset: 0
   }
 
@@ -96,9 +101,10 @@
       data.offsetBottom && (data.offset.bottom = data.offsetBottom)
       data.offsetTop && (data.offset.top = data.offsetTop)
 
-      $spy.affix(data)
+      affix($spy, data)
     })
   })
 
+  return affix;
 
-}(window.jQuery);
+});
